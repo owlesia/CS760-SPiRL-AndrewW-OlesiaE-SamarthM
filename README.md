@@ -15,3 +15,5 @@ virtualenv -p $(which python3.7) ./venv
 ```
 conda install mpi4py
 ```
+
+3. To install mujoco, download mujoco 210! and set env variables
