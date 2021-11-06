@@ -27,3 +27,34 @@ conda install mpi4py
 6. pip3 install mujoco-py==2.0.2.8
 
 NVM, use university's linux: ssh your_username@best-linux.cs.wisc.edu
+
+python3 -m virtualenv venv 
+
+
+
+1. curl https://pyenv.run | bash
+2. If your ~/.bash_profile sources ~/.bashrc (Red Hat, Fedora, CentOS):
+3. restart
+4. pyenv install 3.7.1
+5. pyenv versions
+6. pyenv global 3.7.1
+7. pyenv prefix
+8. python -V
+9. python3.7 -m pip install virtualenv
+10. python3.7 -m virtualenv venv 
+
+
+scp -r .mujoco oelfimova@best-linux.cs.wisc.edu:/u/o/e/oelfimova/.mujoco # do this for mujoco200 linux!!
+
+setup.py -> pip install -e .
+comment out dm_control
+insatll mujoco_py with pip3
+
+source $HOME/.bashrc
+
+export all environmental bvariables as prompted + the ones in spirl doc
+
+apt-get install libosmesa6-dev
+
+dpkg-deb -x libosmesa6-dev_21.0.3-0ubuntu0.3~20.04.3_amd64.deb $HOME
+dpkg-deb -e libosmesa6-dev_21.0.3-0ubuntu0.3~20.04.3_amd64.deb my-private-control
