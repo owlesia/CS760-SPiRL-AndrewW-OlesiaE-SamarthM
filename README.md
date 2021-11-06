@@ -22,4 +22,8 @@ conda install mpi4py
 
 5. Follow https://diewland.medium.com/how-to-install-python-3-7-on-macbook-m1-87c5b0fcb3b5 and run "ibrew install gcc@7"
 
+6. Install "ibrew install python@3.7" and use "/usr/local/opt/python@3.7/bin/python3" to install all packages.
+
 6. pip3 install mujoco-py==2.0.2.8
+
+NVM, use university's linux: ssh your_username@best-linux.cs.wisc.edu
