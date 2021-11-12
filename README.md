@@ -58,3 +58,13 @@ apt-get install libosmesa6-dev
 
 dpkg-deb -x libosmesa6-dev_21.0.3-0ubuntu0.3~20.04.3_amd64.deb $HOME
 dpkg-deb -e libosmesa6-dev_21.0.3-0ubuntu0.3~20.04.3_amd64.deb my-private-control
+
+## Open AI Gym
+
+start a virtual environment
+Install gym and requirements:
+	pip3 install -r requirements.txt
+test installation by running the test environment from the openAI website:
+	python3 test.py
+
+
