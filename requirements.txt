@@ -1,3 +1,4 @@
 gym
 pyglet
 mujoco-py
+stable-baselines3
