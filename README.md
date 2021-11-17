@@ -16,15 +16,23 @@ virtualenv -p $(which python3.7) ./venv
 conda install mpi4py
 ```
 
-3. To install mujoco, download mujoco 210! and set env variables
+3. To install mujoco, download mujoco 210! and set env variables.   
+   Note: use both mujoco 200 and mujoco 210 (for SPIRL and D4RL)
 
 4. To install D4RL comment out dm_control and install it with pip
+	- Note: need to install a different fork of D4RL:
+		```
+		git clone https://github.com/kpertsch/d4rl.git
+		cd d4rl
+		pip3 install -e .
+		```
+
 
 5. Follow https://diewland.medium.com/how-to-install-python-3-7-on-macbook-m1-87c5b0fcb3b5 and run "ibrew install gcc@7"
 
 6. Install "ibrew install python@3.7" and use "/usr/local/opt/python@3.7/bin/python3" to install all packages.
 
-6. pip3 install mujoco-py==2.0.2.8
+7. pip3 install mujoco-py==2.0.2.8
 
 NVM, use university's linux: ssh your_username@best-linux.cs.wisc.edu
 
@@ -61,10 +69,14 @@ dpkg-deb -e libosmesa6-dev_21.0.3-0ubuntu0.3~20.04.3_amd64.deb my-private-contro
 
 ## Open AI Gym
 
-start a virtual environment
-Install gym and requirements:
+start a virtual environment  
+-Install gym and requirements:
+	```
 	pip3 install -r requirements.txt
-test installation by running the test environment from the openAI website:
+	```  
+-test installation by running the test environment from the openAI website:
+	```
 	python3 test.py
+	```
 
 
