@@ -1,3 +1,4 @@
 venv/
 Data-Generation/data/*
 Data-Generation/TrainedModels/*
+.DS_Store
