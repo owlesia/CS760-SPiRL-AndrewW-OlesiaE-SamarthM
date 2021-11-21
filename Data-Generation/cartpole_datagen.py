@@ -6,11 +6,21 @@ import os
 
 from stable_baselines3 import PPO, A2C
 
+"""
+example usage:
+python3 cartpole_datagen.py --env Acrobot-v1 --episodes 20 --max_steps 100 --timesteps 20_000
+"""
+
 # parse args
 parser = argparse.ArgumentParser(description="Process input.")
 parser.add_argument("--env", help="Environment name", default="CartPole-v1")
+parser.add_argument(
+    "--timesteps", help="Number of steps for model to learn", type=int, default=25_000
+)
 parser.add_argument("--episodes", help="Number of episodes", type=int, default=100)
-parser.add_argument("--steps", help="Number of steps", type=int, default=1000)
+parser.add_argument(
+    "--max_steps", help="Number of steps in each episode", type=int, default=1000
+)
 args = parser.parse_args()
 
 # TODO:
@@ -75,7 +85,7 @@ if __name__ == "__main__":
 
     # command for the model to train, according to stable baseline3 docs, 25_000 is enough for PPO to learn
     print("Model started learning")
-    model.learn(total_timesteps=25_000)
+    model.learn(total_timesteps=args.timesteps)
 
     # model.save("./TrainedModels/cartpole_a2c")
 
@@ -87,7 +97,7 @@ if __name__ == "__main__":
     # need state, action, and image sequences ie. at each timestep: https://github.com/clvrai/spirl#adding-a-new-dataset-for-model-training
     # will need to format dataloader to take this data as input
     episodes = args.episodes
-    max_steps = args.steps
+    max_steps = args.max_steps
     observation = env.reset()
     action_sequence = []
     state_sequence = []
