@@ -1,4 +1,4 @@
-# CS760-SPiRL-No-Depression
+# CS760-SPiRL-AndrewW-OlesiaE-SamarthM
 
 ## Help
 
