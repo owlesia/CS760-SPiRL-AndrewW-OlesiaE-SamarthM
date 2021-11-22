@@ -1,4 +1,5 @@
 import d4rl
+import h5py
 from gym_minigrid.wrappers import *
 import numpy as np
 import itertools
@@ -25,8 +26,10 @@ class D4RLSequenceSplitDataset(Dataset):
         self.n_worker = 4
         self.shuffle = shuffle
 
-        env = gym.make(self.spec.env_name)
-        self.dataset = env.get_dataset()
+        # env = gym.make(self.spec.env_name)
+        self.dataset = h5py.File(
+            "/home/olesia/spirl/data/minigrid4rooms/minigrid4rooms.hdf5", "r"
+        )  # env.get_dataset()
 
         # split dataset into sequences
         seq_end_idxs = np.where(self.dataset["terminals"])[0]
