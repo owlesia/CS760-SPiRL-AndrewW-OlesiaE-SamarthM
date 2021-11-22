@@ -8,7 +8,7 @@ from stable_baselines3 import PPO, A2C
 
 """
 example usage:
-python3 cartpole_datagen.py --env Acrobot-v1 --episodes 20 --max_steps 100 --timesteps 20_000
+python3 datagen.py --env Acrobot-v1 --episodes 20 --max_steps 100 --timesteps 20_000
 """
 
 # parse args
