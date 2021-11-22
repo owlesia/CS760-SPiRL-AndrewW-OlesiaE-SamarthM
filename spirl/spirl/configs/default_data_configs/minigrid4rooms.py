@@ -7,7 +7,7 @@ from spirl.data.minigrid4rooms.src.minigrid4rooms_data_loader import (
 data_spec = AttrDict(
     dataset_class=D4RLSequenceSplitDataset,
     n_actions=9,
-    state_dim=6272,
+    state_dim=3,
     env_name="MiniGrid-FourRooms-v0",
     res=128,
     crop_rand_subseq=True,
