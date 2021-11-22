@@ -1,5 +1,7 @@
 from spirl.utils.general_utils import AttrDict
-from spirl.data.kitchen.src.kitchen_data_loader import D4RLSequenceSplitDataset
+from spirl.data.minigrid4rooms.src.minigrid4rooms_data_loader import (
+    D4RLSequenceSplitDataset,
+)
 
 
 data_spec = AttrDict(

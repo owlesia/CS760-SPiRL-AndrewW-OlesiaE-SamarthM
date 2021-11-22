@@ -1,5 +1,5 @@
 import d4rl
-import gym
+from gym_minigrid.wrappers import *
 import numpy as np
 import itertools
 
