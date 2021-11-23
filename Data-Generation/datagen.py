@@ -3,12 +3,13 @@ import gym
 import h5py
 import numpy as np
 import os
+import random
 
 from stable_baselines3 import PPO, A2C
 
 """
 example usage:
-python3 datagen.py --env Acrobot-v1 --max_steps 100 --timesteps 20_000 --train_size 20 --test_size 5 --val_size 5
+python3 datagen.py --env Acrobot-v1 --max_steps 100 --timesteps 20_000 --train_size 20 --test_size 5 --val_size 5 --noise 0.5
 """
 
 # parse args
@@ -23,6 +24,7 @@ parser.add_argument(
 parser.add_argument("--train_size", help="Number of episodes used for training data", type=int, default=100)
 parser.add_argument("--test_size", help="Number of episodes used for test data", type=int, default=10)
 parser.add_argument("--val_size", help="Number of episodes used for validation data", type=int, default=10)
+parser.add_argument("--noise", help="value from 0 to 1: the probability of taking a random move instead of the learned move when generating data", type=float, default=0)
 args = parser.parse_args()
 
 # TODO:
@@ -98,6 +100,11 @@ if __name__ == "__main__":
     # use trained model to generate data
     # need state, action, and image sequences ie. at each timestep: https://github.com/clvrai/spirl#adding-a-new-dataset-for-model-training
     # will need to format dataloader to take this data as input
+    noise = args.noise
+    # noise should be 0 to 1
+    if noise > 1 or noise < 0:
+        print("Warning: noise parameter must be between 1 and 0. Adjusting noise to be in this range.")
+        noise = min(max(noise, 1), 0)
     type_episodes = {"train": args.train_size, "test": args.test_size, "val": args.val_size}
     max_steps = args.max_steps
     observation = env.reset()
@@ -111,6 +118,9 @@ if __name__ == "__main__":
             for step in range(max_steps):
                 # policy predicts what action to take and track action + state info
                 action, _ = model.predict(observation)
+                # randomly choose an action for noise
+                if (random.uniform(0, 1) < noise):
+                    action = env.action_space.sample()
                 action_sequence.append(action)
                 state_sequence.append(observation)
                 image_sequence.append(env.render("rgb_array"))
