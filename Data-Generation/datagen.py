@@ -8,7 +8,7 @@ from stable_baselines3 import PPO, A2C
 
 """
 example usage:
-python3 datagen.py --env Acrobot-v1 --episodes 20 --max_steps 100 --timesteps 20_000
+python3 datagen.py --env Acrobot-v1 --max_steps 100 --timesteps 20_000 --train_size 20 --test_size 5 --val_size 5
 """
 
 # parse args
@@ -17,10 +17,12 @@ parser.add_argument("--env", help="Environment name", default="CartPole-v1")
 parser.add_argument(
     "--timesteps", help="Number of steps for model to learn", type=int, default=25_000
 )
-parser.add_argument("--episodes", help="Number of episodes", type=int, default=100)
 parser.add_argument(
     "--max_steps", help="Number of steps in each episode", type=int, default=1000
 )
+parser.add_argument("--train_size", help="Number of episodes used for training data", type=int, default=100)
+parser.add_argument("--test_size", help="Number of episodes used for test data", type=int, default=10)
+parser.add_argument("--val_size", help="Number of episodes used for validation data", type=int, default=10)
 args = parser.parse_args()
 
 # TODO:
@@ -29,7 +31,7 @@ args = parser.parse_args()
 # 3. modularize code to work with other openAI Gym environments and use other stable_baselines3 RL algorithms
 
 
-def save_data(actions, states, images, dones, episode_num):
+def save_data(actions, states, images, dones, episode_num, stage):
     print("Saving data")
     # following how authors of SPIRL save their data
     # https://github.com/kpertsch/d4rl/blob/master/scripts/generate_randMaze2d_datasets.py#L108
@@ -37,7 +39,7 @@ def save_data(actions, states, images, dones, episode_num):
     env_name = (args.env).split("-")[0].lower()
     if not os.path.exists(f"./data/{env_name}"):
         os.makedirs(f"./data/{env_name}")
-    data_path = f"./data/{env_name}/{env_name}_a2c_data_{episode_num}.h5"
+    data_path = f"./data/{env_name}/{stage}/{env_name}_a2c_data_{episode_num}.h5"
 
     f = h5py.File(data_path, "w")
     f.create_dataset("traj_per_file", data=1)
@@ -96,46 +98,49 @@ if __name__ == "__main__":
     # use trained model to generate data
     # need state, action, and image sequences ie. at each timestep: https://github.com/clvrai/spirl#adding-a-new-dataset-for-model-training
     # will need to format dataloader to take this data as input
-    episodes = args.episodes
+    type_episodes = {"train": args.train_size, "test": args.test_size, "val": args.val_size}
     max_steps = args.max_steps
     observation = env.reset()
     action_sequence = []
     state_sequence = []
     image_sequence = []
     done_sequence = []
-    for cur_episode in range(episodes):
-        for step in range(max_steps):
-            # policy predicts what action to take and track action + state info
-            action, _ = model.predict(observation)
-            action_sequence.append(action)
-            state_sequence.append(observation)
-            image_sequence.append(env.render("rgb_array"))
+    for data_stage in type_episodes.keys():
+        episodes = type_episodes[data_stage]
+        for cur_episode in range(episodes):
+            for step in range(max_steps):
+                # policy predicts what action to take and track action + state info
+                action, _ = model.predict(observation)
+                action_sequence.append(action)
+                state_sequence.append(observation)
+                image_sequence.append(env.render("rgb_array"))
 
-            # for visualization
-            env.render()
+                # for visualization
+                env.render()
 
-            # take the predicted action
-            observation, reward, done, info = env.step(action)
-            done_sequence.append(done)
+                # take the predicted action
+                observation, reward, done, info = env.step(action)
+                done_sequence.append(done)
 
-            # save data and reset everything if this episode is done
-            if done:
-                observation = env.reset()
-                print("episode: ", cur_episode)
-                print("num_steps: ", step)
-                print("~~~~~~~~~~~~~~~~~~~~~~~~")
-                # save the data
-                save_data(
-                    action_sequence,
-                    state_sequence,
-                    image_sequence,
-                    done_sequence,
-                    cur_episode,
-                )
+                # save data and reset everything if this episode is done
+                if done:
+                    observation = env.reset()
+                    print("episode: ", cur_episode)
+                    print("num_steps: ", step)
+                    print("~~~~~~~~~~~~~~~~~~~~~~~~")
+                    # save the data
+                    save_data(
+                        action_sequence,
+                        state_sequence,
+                        image_sequence,
+                        done_sequence,
+                        cur_episode,
+                        data_stage
+                    )
 
-                # reset the tracked data
-                action_sequence = []
-                state_sequence = []
-                image_sequence = []
-                # stop iterating on this episode -- move to next
-                break
+                    # reset the tracked data
+                    action_sequence = []
+                    state_sequence = []
+                    image_sequence = []
+                    # stop iterating on this episode -- move to next
+                    break
