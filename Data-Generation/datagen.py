@@ -22,7 +22,7 @@ parser.add_argument(
     "--max_steps", help="Number of steps in each episode", type=int, default=1000
 )
 parser.add_argument("--train_size", help="Number of episodes used for training data", type=int, default=100)
-parser.add_argument("--test_size", help="Number of episodes used for test data", type=int, default=10)
+parser.add_argument("--test_size", help="Number of episodes used for test data", type=int, default=0) # spirl doesn't use training data by default
 parser.add_argument("--val_size", help="Number of episodes used for validation data", type=int, default=10)
 parser.add_argument("--noise", help="value from 0 to 1: the probability of taking a random move instead of the learned move when generating data", type=float, default=0)
 args = parser.parse_args()
@@ -57,6 +57,8 @@ def save_data(actions, states, images, dones, episode_num, stage):
     traj_data.create_dataset("states", data=states)
     traj_data.create_dataset("images", data=images, dtype=np.uint8)
     traj_data.create_dataset("actions", data=actions)
+    traj_data.create_dataset("terminals", data=dones)
+    print("terminals saved")
 
     if np.sum(dones) == 0:
         dones[-1] = True
@@ -139,18 +141,20 @@ if __name__ == "__main__":
                     print("num_steps: ", step)
                     print("~~~~~~~~~~~~~~~~~~~~~~~~")
                     # save the data
-                    save_data(
-                        action_sequence,
-                        state_sequence,
-                        image_sequence,
-                        done_sequence,
-                        cur_episode,
-                        data_stage
-                    )
+                    # save_data(
+                    #     action_sequence,
+                    #     state_sequence,
+                    #     image_sequence,
+                    #     done_sequence,
+                    #     cur_episode,
+                    #     data_stage
+                    # )
 
                     # reset the tracked data
-                    action_sequence = []
-                    state_sequence = []
-                    image_sequence = []
+                    #action_sequence = []
+                    #state_sequence = []
+                    #image_sequence = []
                     # stop iterating on this episode -- move to next
                     break
+        save_data(action_sequence, state_sequence, image_sequence, done_sequence, 0, data_stage)
+            
