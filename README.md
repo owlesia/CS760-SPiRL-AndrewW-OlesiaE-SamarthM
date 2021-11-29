@@ -80,3 +80,19 @@ start a virtual environment
 	```
 
 
+## Running SPIRL on OpenAI Gym
+
+1. Generate data (Note: may need to change model or adjust some parameters to run):  
+	```
+	cd Data-Generation
+	python3 datagen.py --env [environment name]
+	```
+
+2. Move the generated data to spirl/data 
+
+3. Create the SPIRL environment for the OpenAI gym--using the GymEnvironment wrapper should be enough: spirl/spirl/rl/envs 
+
+4. Create the necessary config files:
+   - spirl/spirl/configs/default_data_configs
+   - spirl/spirl/hrl: base_conf.py and spirl/conf.py
+   - skill_prior_learning/[env]/hierarchical/conf.py (also possibly flat priors?)
