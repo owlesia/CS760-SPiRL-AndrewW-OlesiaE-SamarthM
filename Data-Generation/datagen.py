@@ -21,9 +21,9 @@ parser.add_argument(
 parser.add_argument(
     "--max_steps", help="Number of steps in each episode", type=int, default=1000
 )
-parser.add_argument("--train_size", help="Number of episodes used for training data", type=int, default=100)
+parser.add_argument("--train_size", help="Number of episodes used for training data", type=int, default=25) #decrease default size because space limitations
 parser.add_argument("--test_size", help="Number of episodes used for test data", type=int, default=0) # spirl doesn't use training data by default
-parser.add_argument("--val_size", help="Number of episodes used for validation data", type=int, default=10)
+parser.add_argument("--val_size", help="Number of episodes used for validation data", type=int, default=5) # decrease deault size because space limitations
 parser.add_argument("--noise", help="value from 0 to 1: the probability of taking a random move instead of the learned move when generating data", type=float, default=0)
 args = parser.parse_args()
 
@@ -47,11 +47,15 @@ def save_data(actions, states, images, dones, episode_num, stage):
     f.create_dataset("traj_per_file", data=1)
 
     # cast everything to an np array
-    actions = np.array(actions, dtype=np.float32)
+    actions = np.array(actions, dtype=np.bool_)
     states = np.array(states, dtype=np.float32)
     images = np.array(images, dtype=np.float32)
     dones = np.array(dones, dtype=np.bool_)
-
+    print("what is written ~~~~~~~~~~~~~")
+    print(states)
+    print(states[0].shape)
+    print(states.shape)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~")
     # save the data into a data group
     traj_data = f.create_group("traj0")
     traj_data.create_dataset("states", data=states)
