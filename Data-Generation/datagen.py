@@ -51,11 +51,12 @@ def save_data(actions, states, images, dones, episode_num, stage):
     states = np.array(states, dtype=np.float32)
     images = np.array(images, dtype=np.float32)
     dones = np.array(dones, dtype=np.bool_)
-    print("what is written ~~~~~~~~~~~~~")
-    print(states)
-    print(states[0].shape)
-    print(states.shape)
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+    # create pad mask
+    is_terminal_idxs = np.nonzero(dones)[0]
+    pad_mask = np.zeros((len(dones),))
+    pad_mask[:is_terminal_idxs[0]] = 1.
+
     # save the data into a data group
     traj_data = f.create_group("traj0")
     traj_data.create_dataset("states", data=states)
@@ -145,20 +146,20 @@ if __name__ == "__main__":
                     print("num_steps: ", step)
                     print("~~~~~~~~~~~~~~~~~~~~~~~~")
                     # save the data
-                    # save_data(
-                    #     action_sequence,
-                    #     state_sequence,
-                    #     image_sequence,
-                    #     done_sequence,
-                    #     cur_episode,
-                    #     data_stage
-                    # )
+                    save_data(
+                        action_sequence,
+                        state_sequence,
+                        image_sequence,
+                        done_sequence,
+                        cur_episode,
+                        data_stage
+                    )
 
                     # reset the tracked data
-                    #action_sequence = []
-                    #state_sequence = []
-                    #image_sequence = []
+                    action_sequence = []
+                    state_sequence = []
+                    image_sequence = []
                     # stop iterating on this episode -- move to next
                     break
-        save_data(action_sequence, state_sequence, image_sequence, done_sequence, 0, data_stage)
+        #save_data(action_sequence, state_sequence, image_sequence, done_sequence, 0, data_stage)
             

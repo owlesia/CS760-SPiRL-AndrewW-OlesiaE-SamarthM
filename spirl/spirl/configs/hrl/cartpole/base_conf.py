@@ -122,7 +122,7 @@ data_config.dataset_spec = data_spec
 
 # Environment
 env_config = AttrDict(
-    name="cartpole",
+    name="CartPole-v1",
     reward_norm=1.,
     screen_width=data_spec.res,
     screen_height=data_spec.res,
