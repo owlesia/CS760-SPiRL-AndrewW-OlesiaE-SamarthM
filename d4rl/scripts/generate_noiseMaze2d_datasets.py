@@ -10,6 +10,7 @@ import os
 import tqdm
 import random
 
+# credit: adapted from KPertsch's fork of D4RL
 
 def reset_data():
     return {'states': [],
@@ -106,10 +107,13 @@ def main():
             ts = 0
             continue
 
+        # add noise to actions
+        # might be interesting to explore how we generate random actions impacts how well prior learning works
         noise = args.noise
         if noise != 0:
+            # with some probability, take a random action instead of predicted actions
             if (random.uniform(0, 1) <= noise):
-                    action = np.random.randn(*act.shape)
+                    act = np.random.randn(*act.shape)
 
         act = np.clip(act, -1.0, 1.0)
         if ts >= max_episode_steps:
