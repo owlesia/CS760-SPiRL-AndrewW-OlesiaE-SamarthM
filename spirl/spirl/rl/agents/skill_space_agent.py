@@ -40,11 +40,10 @@ class SkillSpaceAgent(BaseAgent):
                                               self._policy.n_rollout_steps)
             self.action_plan = deque(split_along_axis(map2np(actions), axis=1))
             print(f"Length of the actions plan is {len(self.action_plan)}")
-        action = None
-        if random.uniform(0, 1) <= 0.3:
-            action = random.sample(self.action_plan, 1)[0]
-        else:
-            action = self.action_plan.popleft()
+        action = self.action_plan.popleft()
+        if random.uniform(0, 1) <= 0.5:
+            action = np.random.randn(*action.shape)
+            action = np.clip(action, -1.0, 1.0)
         return AttrDict(action=action) # self.action_plan.popleft())
 
     def reset(self):
