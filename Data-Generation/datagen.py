@@ -4,6 +4,8 @@ import h5py
 import numpy as np
 import os
 import random
+import math
+from PIL import Image
 
 from stable_baselines3 import PPO, A2C
 
@@ -78,7 +80,6 @@ def save_data(actions, states, images, dones, episode_num, stage):
 
     return
 
-
 if __name__ == "__main__":
     # create the environment
     env = gym.make(args.env)
@@ -88,20 +89,22 @@ if __name__ == "__main__":
     # according to this paper: https://arxiv.org/pdf/1810.01940.pdf
     # actor critic models like A2C work well on cartpole
     # value function works better, but is not in stable baselines
-    model = A2C("MlpPolicy", env)
+    #model = A2C("MlpPolicy", env)
 
     # Use PPO https://arxiv.org/pdf/1707.06347.pdf: better performance than A2C on more complicated Atari games
     # Should work well on basic RL environments
     # model = PPO("MlpPolicy", env)
 
     # command for the model to train, according to stable baseline3 docs, 25_000 is enough for PPO to learn
-    print("Model started learning")
-    model.learn(total_timesteps=args.timesteps)
+    #print("Model started learning")
+    #model.learn(total_timesteps=args.timesteps)
 
-    # model.save("./TrainedModels/cartpole_a2c")
+    #model.save("./TrainedModels/cartpole_a2c")
 
     # assume that the model has been trained
-    # model = A2C.load("./TrainedModels/cartpole_a2c")
+
+    print("Use pretrained cartpole model")
+    model = A2C.load("./TrainedModels/cartpole_a2c")
     # model = PPO.load("./TrainedModels/cartpole_a2c")
 
     # use trained model to generate data
@@ -126,40 +129,73 @@ if __name__ == "__main__":
                 # policy predicts what action to take and track action + state info
                 action, _ = model.predict(observation)
                 # randomly choose an action for noise
-                if (random.uniform(0, 1) < noise):
+                if (random.uniform(0, 1) <= noise):
                     action = env.action_space.sample()
+                action = np.array([action])
                 action_sequence.append(action)
                 state_sequence.append(observation)
-                image_sequence.append(env.render("rgb_array"))
+                # compress 
+                img = env.render("rgb_array")
+                dim = img.shape
+                compress_height_condition = [True if i %(dim[0]/32) == 0 else False for i in range(dim[0])]
+                img = np.compress(compress_height_condition, img, 0)
+                compress_width_condition = [True if i % (math.ceil(dim[1]/32)) == 0 else False for i in range(dim[1])]
+                img = np.compress(compress_width_condition, img, 1)
+
+                image_sequence.append(img)
 
                 # for visualization
-                env.render()
+                # env.render()
+                # sanity check below: messy on the display though
+                # render = Image.fromarray(img, 'RGB')
+                # render.show()
 
                 # take the predicted action
-                observation, reward, done, info = env.step(action)
+                observation, reward, done, info = env.step(action[0])
                 done_sequence.append(done)
 
                 # save data and reset everything if this episode is done
                 if done:
-                    observation = env.reset()
-                    print("episode: ", cur_episode)
-                    print("num_steps: ", step)
-                    print("~~~~~~~~~~~~~~~~~~~~~~~~")
-                    # save the data
-                    save_data(
-                        action_sequence,
-                        state_sequence,
-                        image_sequence,
-                        done_sequence,
-                        cur_episode,
-                        data_stage
-                    )
+                    # observation = env.reset()
+                    # print("episode: ", cur_episode)
+                    # print("num_steps: ", step)
+                    # print("~~~~~~~~~~~~~~~~~~~~~~~~")
+                    # # save the data
+                    # save_data(
+                    #     action_sequence,
+                    #     state_sequence,
+                    #     image_sequence,
+                    #     done_sequence,
+                    #     cur_episode,
+                    #     data_stage
+                    # )
 
-                    # reset the tracked data
-                    action_sequence = []
-                    state_sequence = []
-                    image_sequence = []
-                    # stop iterating on this episode -- move to next
+                    # # reset the tracked data
+                    # action_sequence = []
+                    # state_sequence = []
+                    # image_sequence = []
+                    # # stop iterating on this episode -- move to next
                     break
+            # episode is finished
+            done_sequence[-1] = 1
+            observation = env.reset()
+            print("episode: ", cur_episode)
+            print("num_steps: ", step)
+            print("~~~~~~~~~~~~~~~~~~~~~~~~")
+            # save the data
+            save_data(
+                action_sequence,
+                state_sequence,
+                image_sequence,
+                done_sequence,
+                cur_episode,
+                data_stage
+            )
+
+            # reset the tracked data
+            action_sequence = []
+            state_sequence = []
+            image_sequence = []
+                    
         #save_data(action_sequence, state_sequence, image_sequence, done_sequence, 0, data_stage)
             

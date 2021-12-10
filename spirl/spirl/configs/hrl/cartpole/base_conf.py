@@ -24,10 +24,10 @@ configuration = {
     'environment': CartPoleEnv, #HighStack11StackEnvV0,
     'sampler': ACMultiImageAugmentedHierarchicalSampler,
     'data_dir': '.',
-    'num_epochs': 100,
-    'max_rollout_len': 1000,
-    'n_steps_per_epoch': 100000,
-    'n_warmup_steps': 2000,
+    'num_epochs': 15,
+    'max_rollout_len': 250,
+    'n_steps_per_epoch': 5000,
+    'n_warmup_steps': 300,
 }
 configuration = AttrDict(configuration)
 
@@ -80,7 +80,7 @@ ll_agent_config.update(AttrDict(
 # HL Policy
 hl_policy_params = AttrDict(
     action_dim=1,       # z-dimension of the skill VAE
-    input_dim=data_spec.state_dim,
+    input_dim=13,
     max_action_range=2.,        # prior is Gaussian with unit variance
     unused_obs_size=ll_model_params.prior_input_res **2 * 3 * ll_model_params.n_input_frames,
 )

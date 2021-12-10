@@ -14,7 +14,6 @@ from spirl.components.data_loader import GlobalSplitVideoDataset
 # )
 # data_spec.max_seq_len = 300
 
-# apparently they never use MazeDataLoader either
 data_spec = AttrDict(
     dataset_class=GlobalSplitVideoDataset,
     n_actions=1,
